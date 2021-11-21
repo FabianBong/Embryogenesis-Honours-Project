@@ -9,12 +9,6 @@ library(pracma)
 X <- as.matrix(samples[,3:11])
 storage.mode(X) <- "numeric"
 
-## Normalize beta value
-minVal <- min(X)
-maxVal <- max(X)
-
-apply(X, 2, normalizeMinMax,min=minVal,max=maxVal)
-
 ## number of CpGs we are looking at
 m <- length(X[,1])
 
