@@ -1,6 +1,11 @@
 ## load Pracma for inverse matrix
 library(pracma)
 
+##Plotting library
+library(ggplot2)
+library(gridExtra)
+library(ggpubr)
+
 ## Multivariate Curve Resolution
 ## Make sure that samples have been loaded with BedGraph_Import
 
@@ -16,7 +21,7 @@ m <- length(X[,1])
 n <- length(X[1,])
 
 ## we can play around with the basis factors (p)
-p <- 6
+p <- 12
 
 ## Get and estimate of P (m * p)
 P_hat <- matrix(runif(p*n,0,2), nrow=p, ncol=n)
@@ -32,7 +37,7 @@ new_P_hat = P_hat
 
 
 ## While there is a big difference between old P and new P
-while(sum(abs(old_P_hat-new_P_hat)) > 0.1)
+while(sum(abs(old_P_hat-new_P_hat)) > 0.01)
 {
   print(sum(abs(old_P_hat-new_P_hat)))
   old_P_hat <- new_P_hat
@@ -53,8 +58,33 @@ while(sum(abs(old_P_hat-new_P_hat)) > 0.1)
 ##new_P_hat is now our final P
 
 ## plot the new_P_hat rows
-par(mfrow = c(1, 1)) 
-plot(c(1,1:8),new_P_hat[1,], type ="l")
+plotVect <- list()
+
+
+for(i in 1:nrow(new_P_hat))
+{
+  plot_df_P <- data.frame(x = c(1,1:8), y = new_P_hat[i,])
+  p1 <- ggplot(data = plot_df_P, aes(x,y)) + 
+    geom_point(data = plot_df_P, aes(x,y,colour = factor(rownames(plot_df_P)))) +
+    geom_line(data = plot_df_P[2:3,], aes(x=x, y = y))+
+    geom_line(data = plot_df_P[c(1,3),], aes(x=x, y = y))+
+    geom_line(data = plot_df_P[3:9,], aes(x=x, y = y)) + 
+    ylab(i) + 
+    theme(axis.text.x = element_blank(),
+          axis.title.x = element_blank(),
+          axis.text.y = element_blank(),
+          axis.ticks.y = element_blank(),
+          axis.title.y = element_text(angle=0, face = "bold",vjust = 0.5),
+          legend.title = element_blank(),
+          panel.border = element_rect(colour = "black", fill=NA, size=1))
+  plotVect[[i]] <- p1
+}
+
+ggarrange(plotlist = plotVect, ncol = 1, nrow = p, common.legend =  TRUE)
+
+do.call("grid.arrange", c(plotVect, ncol = 1))
+
+dev.off()
 
 
 ## Now we wanna find the CpGs that follow the modulation
@@ -65,7 +95,7 @@ dev <- 0.1
 follow <- vector()
 
 ##Which row of P to compare to 
-rowP <- 1
+rowP <- 9
 
 ## Check each row in X
 for(i in 1:nrow(X))
@@ -79,6 +109,38 @@ for(i in 1:nrow(X))
   }
 }
 
+## Cluster probes as long as they are at most 20 away from each other
+clusters = list()
+dist = 20
+curr_probe = follow[1]
+curr_cluster = vector()
+curr_cluster <- append(curr_cluster, curr_probe)
+for(i in 2:length(follow))
+{
+  if(follow[i] <= curr_probe + dist)
+  {
+    curr_cluster <- append(curr_cluster, follow[i])
+  }
+  else
+  {
+    clusters <- append(clusters, list(curr_cluster))
+    curr_cluster = vector()
+    curr_cluster <- append(curr_cluster, follow[i])
+  }
+  curr_probe <- follow[i]
+}
+clusters <- c(clusters, list(curr_cluster))
+
+## Only keep clusters of 3 or more probes
+keep <- vector()
+for(i in 1:length(clusters))
+{
+  if(length(clusters[[i]]) >= 3)
+    keep <- c(keep,i)
+}
+
+## All clusters of interest
+clusters <- clusters[keep]
 
 
 ## Normalize the given vector
