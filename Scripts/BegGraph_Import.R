@@ -1,5 +1,3 @@
-library(rtracklayer)
-library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 
 ## BedGraph file has been generated with Bowtie and Bismark
 file_path <- "/Users/fabianbong/Documents/Honours_Project_R/Data/Processed_Data/CpG/Union/Combined/Methylation_Reproduce_NoNA.bed.txt"

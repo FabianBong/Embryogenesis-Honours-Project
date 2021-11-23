@@ -6,6 +6,9 @@ library(ggplot2)
 library(gridExtra)
 library(ggpubr)
 
+## Cosine similarity
+library(lsa)
+
 ## Multivariate Curve Resolution
 ## Make sure that samples have been loaded with BedGraph_Import
 
@@ -21,7 +24,7 @@ m <- length(X[,1])
 n <- length(X[1,])
 
 ## we can play around with the basis factors (p)
-p <- 12
+p <- 5
 
 ## Get and estimate of P (m * p)
 P_hat <- matrix(runif(p*n,0,2), nrow=p, ncol=n)
@@ -95,17 +98,15 @@ dev <- 0.1
 follow <- vector()
 
 ##Which row of P to compare to 
-rowP <- 9
+rowP <- 1
 
-## Check each row in X
+##Cosine similarity
 for(i in 1:nrow(X))
 {
-  for(j in 1:ncol(X))
+  if(!is.na(cosine(new_P_hat[rowP,],X[i,])[1]) && cosine(new_P_hat[rowP,],X[i,])[1] > 0.95)
   {
-    if(j == 9 && X[i,j] > new_P_hat[rowP,j]-dev && X[i,j] < new_P_hat[rowP,j]+dev)
-      follow <- c(follow,i)
-    if(X[i,j] < new_P_hat[rowP,j]-dev || X[i,j] > new_P_hat[rowP,j]+dev)
-      break;
+    print(cosine(new_P_hat[rowP,],X[i,])[1])
+    follow <- c(follow,i)
   }
 }
 
