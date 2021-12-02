@@ -73,8 +73,8 @@ for(i in 1:nrow(new_P_hat))
     geom_line(data = plot_df_P[c(1,3),], aes(x=x, y = y))+
     geom_line(data = plot_df_P[3:9,], aes(x=x, y = y)) + 
     ylab(i) + 
+    xlab("Developmental Stage") +
     theme(axis.text.x = element_blank(),
-          axis.title.x = element_blank(),
           axis.text.y = element_blank(),
           axis.ticks.y = element_blank(),
           axis.title.y = element_text(angle=0, face = "bold",vjust = 0.5),
@@ -83,9 +83,16 @@ for(i in 1:nrow(new_P_hat))
   plotVect[[i]] <- p1
 }
 
-ggarrange(plotlist = plotVect, ncol = 1, nrow = p, common.legend =  TRUE)
+ggarrange(plotlist = plotVect, ncol = 3, nrow = 2, common.legend =  TRUE, align ="hv")
 
-do.call("grid.arrange", c(plotVect, ncol = 1))
+grid.arrange(
+  grobs = plotVect,
+  widths = c(2, 1, 1),
+  layout_matrix = rbind(c(1, 2, 2),
+                        c(3, 34, 5))
+)
+
+do.call("grid.arrange", c(plotVect, ncol = 3, nrow = 2))
 
 dev.off()
 
@@ -98,7 +105,7 @@ dev <- 0.1
 follow <- vector()
 
 ##Which row of P to compare to 
-rowP <- 1
+rowP <- 3
 
 ##Cosine similarity
 for(i in 1:nrow(X))

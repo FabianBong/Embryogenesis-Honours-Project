@@ -2,26 +2,25 @@
 
 ## MacOS based installation
 
-Download sratoolkit:
+## Download sratoolkit:
 
 $curl --output sratoolkit.tar.gz http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-mac64.tar.gz
 
-Untar tarball:
+## Untar tarball:
 
 $tar -vxzf sratoolkit.tar.gz
 
-For convencience append sratoolkit to $PATH. Make sure to change path to 
+## For convencience append sratoolkit to $PATH. Make sure to change path to 
 correct path:
 
 $export PATH=$PATH:$PWD/sratoolkit/bin
 
-Donwload any file and download it to the current directory:
+## Donwload any file and download it to the current directory:
 
 $prefetch -v <SRA accession>
 
-Then, the FastQ file can be extracted (paired-end reads) with. The files will
-be created in the same directory:
+## Then, the FastQ file can be extracted (paired-end reads) with. The files will be created in the same directory:
 
 $fastq-dump <SRA accession> --split-files 
 
-Now, the FastQ Files are availble (two files because paired-ends).
+## Now, the FastQ Files are availble (two files because paired-ends).

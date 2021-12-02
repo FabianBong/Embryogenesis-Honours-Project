@@ -1,0 +1,14 @@
+## Trimming of Files
+
+## Results indicate that trimming of raw reads increase mapping efficiencies
+## We can use trimmomatic: http://www.usadellab.org/cms/?page=trimmomatic
+
+## On Compute Canada we can load trimmomatic:
+
+$module load trimmomatic 
+
+## Basic paired-end read settings are sufficient
+
+$java -jar trimmomatic-0.39.jar PE input_forward.fq.gz input_reverse.fq.gz output_forward_paired.fq.gz output_forward_unpaired.fq.gz output_reverse_paired.fq.gz output_reverse_unpaired.fq.gz LEADING:3 TRAILING:3 MINLEN:36
+
+## Trimmed files must then be aligned and methylation status can be extracted 
